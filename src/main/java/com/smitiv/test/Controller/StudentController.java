@@ -5,6 +5,9 @@ import com.smitiv.test.Service.CreateStudent.CreateStudentResponse;
 import com.smitiv.test.Service.CreateStudent.CreateStudentService;
 import com.smitiv.test.Service.GetStudentDetailById.GetStudentByIdResponse;
 import com.smitiv.test.Service.GetStudentDetailById.GetStudentByIdService;
+import com.smitiv.test.Service.UpdateStudent.UpdateStudentDTO;
+import com.smitiv.test.Service.UpdateStudent.UpdateStudentResponse;
+import com.smitiv.test.Service.UpdateStudent.UpdateStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,8 @@ public class StudentController {
     CreateStudentService createStudentService;
     @Autowired
     GetStudentByIdService getStudentByIdService;
+    @Autowired
+    UpdateStudentService updateStudentService;
 
     @PostMapping(value = "/createStudent", produces = "application/json")
     public ResponseEntity createStudent(@RequestBody CreateStudentDTO createStudentDTO) {
@@ -52,4 +57,22 @@ public class StudentController {
                     .header(response.getMessage()).body(response);
         }
     }
+
+    @PutMapping(value = "/updateStudent", produces = "application/json")
+    public ResponseEntity updateStudent(@RequestBody UpdateStudentDTO updateStudentDTO) {
+        UpdateStudentResponse response = null;
+        try {
+            response = updateStudentService.execute(updateStudentDTO);
+        } catch (Exception e) {
+            response.SUCCESSFUL = false;
+            response.setMessage("Failure:");
+        }
+        if (response.SUCCESSFUL)
+            return ResponseEntity.ok().header(response.getMessage()).body(response);
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header(response.getMessage()).body(response);
+        }
+    }
+
 }
